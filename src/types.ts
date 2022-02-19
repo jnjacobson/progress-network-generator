@@ -8,9 +8,9 @@ export type Trace = {
 };
 
 export type Edge = {
-  count: number;
-  fromIndex: number | null; // null means 'start' -> x
-  toIndex: number;
+  weight: number;
+  source: string;
+  target: string;
 };
 
 export type ProgressNetwork = {

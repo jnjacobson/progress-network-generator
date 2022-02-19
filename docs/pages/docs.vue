@@ -10,13 +10,23 @@
         </h2>
       </div>
 
-      <div id="network" />
+      <button
+        class="bg-gray-100 hover:bg-gray-200 py-2 px-3 rounded"
+        @click="generateAndRender"
+      >
+        Generate Network
+      </button>
+
+      <div
+        id="network"
+        class="border border-2 rounded"
+      />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
 
 import type { ProgressNetwork, Trace } from '../../src';
 import generateProgressNetwork from '../../src/generateProgressNetwork';
@@ -66,7 +76,11 @@ const TRACES = <Trace[]>[
   },
 ];
 
-const network = ref<ProgressNetwork>(generateProgressNetwork(TESTS, TRACES));
+const generateAndRender = () => {
+  const network = ref<ProgressNetwork>(generateProgressNetwork(TESTS, TRACES));
 
-renderProgressNetwork('network', 500, 500, network.value);
+  renderProgressNetwork('network', 600, 300, network.value);
+};
+
+onMounted(generateAndRender);
 </script>

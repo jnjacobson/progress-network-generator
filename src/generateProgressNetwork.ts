@@ -1,29 +1,29 @@
 import { Edge, ProgressNetwork, Trace } from './types';
 
-const extractRawEdges = (traces: Trace[], passIndex: number): Edge[] => (
+const extractRawEdges = (traces: Trace[], nodes: string[]): Edge[] => (
   traces.flatMap(({ attempts }: Trace): Edge[] => {
     const traceEdges = <Edge[]>[];
-    let fromIndex = 0;
+    let source = nodes[0]; // start
 
     for (let i = 0; i < attempts.length; i++) {
-      const toIndex = attempts[i].hasPassed
-        ? passIndex
-        : attempts[i].failedTestIndex + 1;
+      const target = attempts[i].hasPassed
+        ? 'PASS'
+        : nodes[attempts[i].failedTestIndex + 1];
 
       traceEdges.push({
-        count: 1,
-        fromIndex,
-        toIndex,
+        weight: 1,
+        source,
+        target,
       });
 
-      fromIndex = toIndex;
+      source = target;
 
-      // if last attempt, append edge from 'pass' to 'end'
+      // if last attempt, append edge from 'PASS' to 'end'
       if (i + 1 === attempts.length) {
         traceEdges.push({
-          count: 1,
-          fromIndex,
-          toIndex: passIndex + 1,
+          weight: 1,
+          source,
+          target: 'end',
         });
       }
     }
@@ -37,8 +37,8 @@ const mergeEdges = (rawEdges: Edge[]): Edge[] => {
 
   rawEdges.forEach((rawEdge: Edge) => {
     const idx = mergedEdges.findIndex(
-      (mergedEdge) => mergedEdge.fromIndex === rawEdge.fromIndex
-        && mergedEdge.toIndex === rawEdge.toIndex,
+      (mergedEdge) => mergedEdge.source === rawEdge.source
+        && mergedEdge.target === rawEdge.target,
     );
 
     if (idx === -1) {
@@ -47,14 +47,14 @@ const mergeEdges = (rawEdges: Edge[]): Edge[] => {
       return;
     }
 
-    mergedEdges[idx].count++;
+    mergedEdges[idx].weight++;
   });
 
   return mergedEdges;
 };
 
-const buildEdges = (traces: Trace[], passIndex: number): Edge[] => {
-  const rawEdges = extractRawEdges(traces, passIndex);
+const buildEdges = (traces: Trace[], nodes: string[]): Edge[] => {
+  const rawEdges = extractRawEdges(traces, nodes);
 
   return mergeEdges(rawEdges);
 };
@@ -69,9 +69,14 @@ const generateProgressNetwork = (
   };
 
   // every test is a node + a final PASS node
-  network.nodes = [...tests, 'PASS'];
+  network.nodes = [
+    'start',
+    ...tests,
+    'PASS',
+    'end',
+  ];
 
-  network.edges = buildEdges(traces, network.nodes.length);
+  network.edges = buildEdges(traces, network.nodes);
 
   return network;
 };
