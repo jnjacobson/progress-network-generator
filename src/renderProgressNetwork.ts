@@ -23,7 +23,13 @@ const renderProgressNetwork = (
     .select(`#${id}`)
     .append('svg')
     .attr('width', width)
-    .attr('height', height);
+    .attr('height', height)
+    .style(
+      'font-family',
+      'ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,'
+      + '"Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif,'
+      + '"Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"',
+    );
 
   const edgesSortedByWeight = network.edges.sort(
     (a, b) => a.weight - b.weight, // render heavier edges later
