@@ -32,12 +32,14 @@ const renderProgressNetwork = (
       + '"Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"',
     );
 
+  const drawGroup = svg.append('g');
+
   const edgesSortedByWeight = network.edges.sort(
     (a, b) => a.weight - b.weight, // render heavier edges later
   );
 
   // create group for edges
-  const edges = svg
+  const edges = drawGroup
     .selectAll('edge')
     .data(edgesSortedByWeight)
     .enter()
@@ -45,7 +47,7 @@ const renderProgressNetwork = (
 
   /* draw nodes */
   // set node data and position
-  const node = svg
+  const node = drawGroup
     .selectAll('node')
     .data(network.nodes)
     .enter()
@@ -179,6 +181,12 @@ const renderProgressNetwork = (
     .attr('y', (e, i) => -(bboxes[i].height * 0.75))
     .attr('height', (e, i) => bboxes[i].height)
     .attr('width', (e, i) => bboxes[i].width + 4);
+
+  /* center network in svg */
+  const drawGrpBBox = drawGroup.node().getBBox();
+  const yTrans = ((height - drawGrpBBox.height) / 2) - drawGrpBBox.y;
+
+  drawGroup.attr('transform', () => `translate(0, ${yTrans})`);
 };
 
 export default renderProgressNetwork;

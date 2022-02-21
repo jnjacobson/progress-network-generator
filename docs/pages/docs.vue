@@ -84,7 +84,7 @@ const TRACES = <Trace[]>[
 const generateAndRender = () => {
   const network = ref<ProgressNetwork>(generateProgressNetwork(TESTS, TRACES));
 
-  renderProgressNetwork('network', 600, 300, network.value);
+  renderProgressNetwork('network', 600, 250, network.value);
 
   const network2 = ref<ProgressNetwork>({
     nodes: [
@@ -313,7 +313,7 @@ const generateAndRender = () => {
     ],
   });
 
-  renderProgressNetwork('network2', 1000, 700, network2.value);
+  renderProgressNetwork('network2', 1000, 550, network2.value);
 };
 
 onMounted(generateAndRender);
