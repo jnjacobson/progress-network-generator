@@ -25,10 +25,14 @@ const renderProgressNetwork = (
     .attr('width', width)
     .attr('height', height);
 
+  const edgesSortedByWeight = network.edges.sort(
+    (a, b) => a.weight - b.weight, // render heavier edges later
+  );
+
   // create group for edges
   const edges = svg
     .selectAll('edge')
-    .data(network.edges)
+    .data(edgesSortedByWeight)
     .enter()
     .append('g');
 
@@ -73,10 +77,12 @@ const renderProgressNetwork = (
     return [transPos.x, transPos.y];
   };
 
-  const calculateThirdPoint = (source: [number, number], target: [number, number]): [number, number][] => {
+  const calculateThirdPoint = (
+    source: [number, number],
+    target: [number, number],
+  ): [number, number][] => {
     const x = target[0] - source[0];
     const y = target[1] - source[1];
-    const O = Math.atan2(y, x);
     const l = Math.sqrt(x * x + y * y);
 
     const radius = l; // ?
@@ -113,23 +119,58 @@ const renderProgressNetwork = (
 
   const curve = d3.line().curve(d3.curveNatural);
 
+  const weights = network.edges.map((e) => e.weight);
+  const lowestWeight = weights.reduce((pw, w) => pw < w ? pw : w);
+  const highestWeight = weights.reduce((pw, w) => pw > w ? pw : w);
+
+  const getWeightFactor = (weight: number): number => (
+    (weight - lowestWeight) / (highestWeight - lowestWeight)
+  );
+
   /* draw edges */
   edges
     .append('path')
     .attr('d', (e) => curve(getPoints(e)))
     .attr('marker-end', (_, i) => `url(#end-arrow${i})`)
     .attr('stroke', 'black')
-    .attr('stroke-width', (e) => e.weight * 2)
-    .attr('stroke-opacity', (e) => e.weight / 2)
+    .attr('stroke-width', (e) => 0.1 + getWeightFactor(e.weight) * 4)
+    .attr('stroke-opacity', (e) => 0.6 + getWeightFactor(e.weight) * 4)
     .attr('fill', 'none');
 
-  edges
+  /* draw weight text */
+
+  const weightTextGroup = edges
+    .append('g')
+    .attr('transform', (e) => {
+      const points = getPoints(e);
+      const i = Math.round(points.length / 2 - 1);
+
+      const x = points[i][0];
+      const y = points[i][1];
+
+      return `translate(${x}, ${y})`;
+    });
+
+  const textBg = weightTextGroup
+    .append('rect')
+    .attr('fill', 'white')
+    .attr('opacity', 0.8);
+
+  weightTextGroup
     .append('text')
-    .attr('dx', (e) => getPoints(e)[1][0])
-    .attr('dy', (e) => getPoints(e)[1][1])
     .text((e) => e.weight)
-    .attr('font-size', '0.75rem')
+    .attr('font-size', (e) => `${0.5 + getWeightFactor(e.weight) * 0.5}rem`)
+    .attr('font-weight', (e) => 400 + getWeightFactor(e.weight) * 200)
+    .attr('opacity', (e) => 0.5 + getWeightFactor(e.weight) * 5)
     .style('text-anchor', 'middle');
+
+  const bboxes = weightTextGroup.nodes().map((n) => n.getBBox());
+
+  textBg
+    .attr('x', (e, i) => -(bboxes[i].width / 2))
+    .attr('y', (e, i) => -(bboxes[i].height * 0.75))
+    .attr('height', (e, i) => bboxes[i].height)
+    .attr('width', (e, i) => bboxes[i].width);
 };
 
 export default renderProgressNetwork;
