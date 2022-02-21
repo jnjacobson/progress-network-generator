@@ -8,17 +8,20 @@ const renderProgressNetwork = (
   height: number,
   network: ProgressNetwork,
 ): void => {
+  // clear all children from element to allow rerendering
   d3
     .select(`#${id}`)
     .selectAll('*')
     .remove();
 
+  // define scale to dynamically place nodes based on given width
   const xScale = d3
     .scaleBand()
     .domain(network.nodes)
     .rangeRound([0, width])
     .padding(0.5);
 
+  // define svg
   const svg = d3
     .select(`#${id}`)
     .append('svg')
@@ -32,14 +35,15 @@ const renderProgressNetwork = (
       + '"Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"',
     );
 
-  const drawGroup = svg.append('g');
+  // append root group to allow centering of network at the end
+  const rootGrp = svg.append('g');
 
   const edgesSortedByWeight = network.edges.sort(
     (a, b) => a.weight - b.weight, // render heavier edges later
   );
 
   // create group for edges
-  const edges = drawGroup
+  const edges = rootGrp
     .selectAll('edge')
     .data(edgesSortedByWeight)
     .enter()
@@ -47,7 +51,7 @@ const renderProgressNetwork = (
 
   /* draw nodes */
   // set node data and position
-  const node = drawGroup
+  const node = rootGrp
     .selectAll('node')
     .data(network.nodes)
     .enter()
@@ -69,6 +73,10 @@ const renderProgressNetwork = (
     .attr('font-size', '0.75rem')
     .style('text-anchor', 'middle');
 
+  /* draw edges */
+
+  // returns the x,y pos of a node
+  // (complex because they are groups that have been transformed)
   const getPositionOfNode = (nodeId: string): [number, number] => {
     const nodeEl = node.nodes().find(
       (n) => n.textContent === nodeId,
@@ -85,7 +93,9 @@ const renderProgressNetwork = (
     return [transPos.x, transPos.y];
   };
 
-  const calculateThirdPoint = (
+  // calculates the maximum point of a curve
+  // (or 3 points when target === source)
+  const calculateMaximumPoint = (
     source: [number, number],
     target: [number, number],
   ): [number, number][] => {
@@ -93,8 +103,9 @@ const renderProgressNetwork = (
     const y = target[1] - source[1];
     const l = Math.sqrt(x * x + y * y);
 
-    const radius = l; // ?
+    const radius = l;
 
+    // target === source
     if (l === 0) {
       return [
         [target[0] - 20, target[1] + 29],
@@ -112,6 +123,7 @@ const renderProgressNetwork = (
     ]];
   };
 
+  // get points to draw edge curve
   const getPoints = (e: Edge): [number, number][] => {
     const sourceAndTarget = [
       getPositionOfNode(e.source),
@@ -120,7 +132,7 @@ const renderProgressNetwork = (
 
     return [
       sourceAndTarget[0],
-      ...calculateThirdPoint(sourceAndTarget[0], sourceAndTarget[1]),
+      ...calculateMaximumPoint(sourceAndTarget[0], sourceAndTarget[1]),
       sourceAndTarget[1],
     ];
   };
@@ -131,11 +143,11 @@ const renderProgressNetwork = (
   const lowestWeight = weights.reduce((pw, w) => pw < w ? pw : w);
   const highestWeight = weights.reduce((pw, w) => pw > w ? pw : w);
 
+  // returns a factor between 0 and 1 to style edges depending on weight
   const getWeightFactor = (weight: number): number => (
     (weight - lowestWeight) / (highestWeight - lowestWeight)
   );
 
-  /* draw edges */
   edges
     .append('path')
     .attr('d', (e) => curve(getPoints(e)))
@@ -148,6 +160,7 @@ const renderProgressNetwork = (
 
   /* draw weight text */
 
+  // add group for positioning and transform to edge curve maxima
   const weightTextGroup = edges
     .append('g')
     .attr('transform', (e) => {
@@ -160,12 +173,14 @@ const renderProgressNetwork = (
       return `translate(${x}, ${y})`;
     });
 
+  // render text background group first, so it is behind text
   const textBg = weightTextGroup
     .append('rect')
     .attr('rx', '2')
     .attr('fill', 'white')
     .attr('opacity', 0.85);
 
+  // render text
   weightTextGroup
     .append('text')
     .text((e) => e.weight)
@@ -174,8 +189,10 @@ const renderProgressNetwork = (
     .attr('opacity', (e) => 0.5 + getWeightFactor(e.weight) * 4)
     .style('text-anchor', 'middle');
 
+  // get bboxes of text for sizing background rects
   const bboxes = weightTextGroup.nodes().map((n) => n.getBBox());
 
+  // fix size & pos of text background rects
   textBg
     .attr('x', (e, i) => -((bboxes[i].width + 4) / 2))
     .attr('y', (e, i) => -(bboxes[i].height * 0.75))
@@ -183,10 +200,13 @@ const renderProgressNetwork = (
     .attr('width', (e, i) => bboxes[i].width + 4);
 
   /* center network in svg */
-  const drawGrpBBox = drawGroup.node().getBBox();
-  const yTrans = ((height - drawGrpBBox.height) / 2) - drawGrpBBox.y;
 
-  drawGroup.attr('transform', () => `translate(0, ${yTrans})`);
+  // get y transition distance
+  const rootGrpBbox = rootGrp.node().getBBox();
+  const yTrans = ((height - rootGrpBbox.height) / 2) - rootGrpBbox.y;
+
+  // center draw group
+  rootGrp.attr('transform', () => `translate(0, ${yTrans})`);
 };
 
 export default renderProgressNetwork;
