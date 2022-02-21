@@ -49,15 +49,14 @@ const renderProgressNetwork = (
   node
     .append('circle')
     .attr('r', 20)
-    .attr('fill', 'none')
-    .classed('fill-white', (n) => ['start', 'end'].includes(n))
-    .classed('fill-gray-100', (n) => !['start', 'end'].includes(n))
-    .classed('stroke-gray-300', (n) => !['start', 'end'].includes(n));
+    .attr('fill', (n) => ['start', 'end'].includes(n) ? 'white' : 'rgb(191 219 254)')
+    .attr('stroke', (n) => ['start', 'end'].includes(n) ? 'none' : 'black');
   // draw node text
   node
     .append('text')
     .attr('dy', '0.325em') // center text vertically
     .text((n) => n)
+    .attr('font-weight', 600)
     .attr('font-size', '0.75rem')
     .style('text-anchor', 'middle');
 
@@ -89,9 +88,9 @@ const renderProgressNetwork = (
 
     if (l === 0) {
       return [
-        [target[0] + 10, target[1] + 30],
-        [target[0] + 30, target[1] + 30],
-        [target[0] + 30, target[1] + 10],
+        [target[0] - 20, target[1] + 29],
+        [target[0], target[1] + 50],
+        [target[0] + 20, target[1] + 29],
       ];
     }
 
@@ -133,8 +132,9 @@ const renderProgressNetwork = (
     .attr('d', (e) => curve(getPoints(e)))
     .attr('marker-end', (_, i) => `url(#end-arrow${i})`)
     .attr('stroke', 'black')
-    .attr('stroke-width', (e) => 0.1 + getWeightFactor(e.weight) * 4)
-    .attr('stroke-opacity', (e) => 0.6 + getWeightFactor(e.weight) * 4)
+    .attr('stroke-linecap', 'round')
+    .attr('stroke-width', (e) => 1 + getWeightFactor(e.weight) * 10)
+    .attr('stroke-opacity', (e) => 0.1 + getWeightFactor(e.weight) * 3)
     .attr('fill', 'none');
 
   /* draw weight text */
@@ -153,24 +153,25 @@ const renderProgressNetwork = (
 
   const textBg = weightTextGroup
     .append('rect')
+    .attr('rx', '2')
     .attr('fill', 'white')
-    .attr('opacity', 0.8);
+    .attr('opacity', 0.85);
 
   weightTextGroup
     .append('text')
     .text((e) => e.weight)
-    .attr('font-size', (e) => `${0.5 + getWeightFactor(e.weight) * 0.5}rem`)
-    .attr('font-weight', (e) => 400 + getWeightFactor(e.weight) * 200)
-    .attr('opacity', (e) => 0.5 + getWeightFactor(e.weight) * 5)
+    .attr('font-size', (e) => `${0.5 + getWeightFactor(e.weight) * 0.75}rem`)
+    .attr('font-weight', 500)
+    .attr('opacity', (e) => 0.5 + getWeightFactor(e.weight) * 4)
     .style('text-anchor', 'middle');
 
   const bboxes = weightTextGroup.nodes().map((n) => n.getBBox());
 
   textBg
-    .attr('x', (e, i) => -(bboxes[i].width / 2))
+    .attr('x', (e, i) => -((bboxes[i].width + 4) / 2))
     .attr('y', (e, i) => -(bboxes[i].height * 0.75))
     .attr('height', (e, i) => bboxes[i].height)
-    .attr('width', (e, i) => bboxes[i].width);
+    .attr('width', (e, i) => bboxes[i].width + 4);
 };
 
 export default renderProgressNetwork;
