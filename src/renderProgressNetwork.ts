@@ -24,6 +24,7 @@ const renderProgressNetwork = (
     .append('svg')
     .attr('width', width)
     .attr('height', height)
+    .style('background-color', 'white')
     .style(
       'font-family',
       'ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,'
