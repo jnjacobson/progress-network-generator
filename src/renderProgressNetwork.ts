@@ -58,11 +58,20 @@ const renderProgressNetwork = (
     .append('g')
     .attr('transform', (n) => `translate(${xScale(n) + xScale.bandwidth() / 2}, ${height / 2})`);
 
+  const getNodeColor = (nodeName: string) => {
+    switch (nodeName) {
+      case 'start':
+      case 'end': return 'white';
+      case 'PASS': return '#D9F99D';
+      default: return '#BFDBFE';
+    }
+  };
+
   // draw node circles
   node
     .append('circle')
     .attr('r', 20)
-    .attr('fill', (n) => ['start', 'end'].includes(n) ? 'white' : 'rgb(191 219 254)')
+    .attr('fill', getNodeColor)
     .attr('stroke', (n) => ['start', 'end'].includes(n) ? 'none' : 'black');
   // draw node text
   node
