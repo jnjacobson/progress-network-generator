@@ -108,9 +108,11 @@ const renderProgressNetwork = (
     // target === source
     if (l === 0) {
       return [
-        [target[0] - 20, target[1] + 29],
-        [target[0], target[1] + 50],
-        [target[0] + 20, target[1] + 29],
+        [target[0] - 21, target[1] + 25],
+        [target[0] - 20, target[1] + 41],
+        [target[0], target[1] + 55],
+        [target[0] + 20, target[1] + 41],
+        [target[0] + 21, target[1] + 25],
       ];
     }
 
@@ -130,9 +132,20 @@ const renderProgressNetwork = (
       getPositionOfNode(e.target),
     ];
 
+    const copy: [number, number][] = JSON.parse(JSON.stringify(sourceAndTarget));
+
+    const isBackOrRepeatstep = sourceAndTarget[0][0] >= sourceAndTarget[1][0];
+
+    // pad source and target coordinates to show arrows
+    sourceAndTarget[0][0] += isBackOrRepeatstep ? -18 : 18; // source x
+    sourceAndTarget[0][1] += isBackOrRepeatstep ? 18 : -18; // source y
+
+    sourceAndTarget[1][0] += isBackOrRepeatstep ? 18 : -18; // target x
+    sourceAndTarget[1][1] += isBackOrRepeatstep ? 18 : -18; // target y
+
     return [
       sourceAndTarget[0],
-      ...calculateMaximumPoint(sourceAndTarget[0], sourceAndTarget[1]),
+      ...calculateMaximumPoint(copy[0], copy[1]),
       sourceAndTarget[1],
     ];
   };
@@ -148,15 +161,33 @@ const renderProgressNetwork = (
     (weight - lowestWeight) / (highestWeight - lowestWeight)
   );
 
+  const padCurve = (d: string) => {
+    console.log(d);
+
+    return d;
+  };
+
   edges
     .append('path')
-    .attr('d', (e) => curve(getPoints(e)))
-    .attr('marker-end', (_, i) => `url(#end-arrow${i})`)
+    .attr('d', (e) => padCurve(curve(getPoints(e))))
+    .attr('marker-end', 'url(#arrow)')
     .attr('stroke', 'black')
-    .attr('stroke-linecap', 'round')
-    .attr('stroke-width', (e) => 1 + getWeightFactor(e.weight) * 10)
-    .attr('stroke-opacity', (e) => 0.1 + getWeightFactor(e.weight) * 3)
+    .attr('stroke-width', (e) => 1.5 + getWeightFactor(e.weight) * 2)
+    .attr('opacity', (e) => 0.1 + getWeightFactor(e.weight) * 2)
     .attr('fill', 'none');
+
+  rootGrp
+    .append('marker')
+    .attr('id', 'arrow')
+    .attr('orient', 'auto')
+    .attr('viewBox', '0 0 40 40')
+    .attr('refX', 27)
+    .attr('refY', 20)
+    .attr('markerWidth', 11)
+    .attr('markerHeight', 11)
+    .attr('markerUnits', 'userSpaceOnUse')
+    .append('path')
+    .attr('d', 'M 0 0 L 40 20 L 0 40 z');
 
   /* draw weight text */
 
@@ -168,7 +199,7 @@ const renderProgressNetwork = (
       const i = Math.round(points.length / 2 - 1);
 
       const x = points[i][0];
-      const y = points[i][1];
+      const y = points[i][1] + 4;
 
       return `translate(${x}, ${y})`;
     });
@@ -176,15 +207,15 @@ const renderProgressNetwork = (
   // render text background group first, so it is behind text
   const textBg = weightTextGroup
     .append('rect')
-    .attr('rx', '2')
+    .attr('rx', 3)
     .attr('fill', 'white')
-    .attr('opacity', 0.85);
+    .attr('opacity', 0.9);
 
   // render text
   weightTextGroup
     .append('text')
     .text((e) => e.weight)
-    .attr('font-size', (e) => `${0.5 + getWeightFactor(e.weight) * 0.75}rem`)
+    .attr('font-size', (e) => `${0.5 + getWeightFactor(e.weight) * 0.6}rem`)
     .attr('font-weight', 500)
     .attr('opacity', (e) => 0.5 + getWeightFactor(e.weight) * 4)
     .style('text-anchor', 'middle');
@@ -194,10 +225,10 @@ const renderProgressNetwork = (
 
   // fix size & pos of text background rects
   textBg
-    .attr('x', (e, i) => -((bboxes[i].width + 4) / 2))
-    .attr('y', (e, i) => -(bboxes[i].height * 0.75))
-    .attr('height', (e, i) => bboxes[i].height)
-    .attr('width', (e, i) => bboxes[i].width + 4);
+    .attr('x', (e, i) => -((bboxes[i].width + 6) / 2))
+    .attr('y', (e, i) => -(bboxes[i].height * 0.7))
+    .attr('height', (e, i) => bboxes[i].height * 0.9)
+    .attr('width', (e, i) => bboxes[i].width + 6);
 
   /* center network in svg */
 
