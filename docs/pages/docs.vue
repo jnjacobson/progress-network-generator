@@ -10,32 +10,27 @@
         </h2>
       </div>
 
-      <button
-        class="bg-gray-100 hover:bg-gray-200 py-2 px-3 rounded"
-        @click="generateAndRender"
-      >
-        Generate Network
-      </button>
-
-      <div
-        id="network"
-        class="border border-2 rounded"
+      <Network
+        :network="network1"
+        :width="600"
+        :height="250"
       />
 
-      <div
-        id="network2"
-        class="border border-2 rounded"
+      <Network
+        :network="network2"
+        :width="1000"
+        :height="550"
       />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from 'vue';
+import { ref } from 'vue';
 
 import type { ProgressNetwork, Trace } from '../../src';
 import generateProgressNetwork from '../../src/generateProgressNetwork';
-import renderProgressNetwork from '../../src/renderProgressNetwork';
+import Network from '../components/Network.vue';
 
 const TESTS = <string[]>[
   'T1',
@@ -81,240 +76,232 @@ const TRACES = <Trace[]>[
   },
 ];
 
-const generateAndRender = () => {
-  const network = ref<ProgressNetwork>(generateProgressNetwork(TESTS, TRACES));
+const network1 = ref<ProgressNetwork>(generateProgressNetwork(TESTS, TRACES));
 
-  renderProgressNetwork('network', 600, 250, network.value);
-
-  const network2 = ref<ProgressNetwork>({
-    nodes: [
-      'start',
-      'T1',
-      'T2',
-      'T3',
-      'T4',
-      'T5',
-      'T6',
-      'T7',
-      'PASS',
-      'end',
-    ],
-    edges: [
-      {
-        source: 'start',
-        target: 'T1',
-        weight: 9627,
-      },
-      {
-        source: 'start',
-        target: 'T2',
-        weight: 944,
-      },
-      {
-        source: 'start',
-        target: 'T3',
-        weight: 1111,
-      },
-      {
-        source: 'start',
-        target: 'T4',
-        weight: 4681,
-      },
-      {
-        source: 'start',
-        target: 'T5',
-        weight: 381,
-      },
-      {
-        source: 'start',
-        target: 'PASS',
-        weight: 6574,
-      },
-      {
-        source: 'T1',
-        target: 'T1',
-        weight: 19228,
-      },
-      {
-        source: 'T1',
-        target: 'T2',
-        weight: 2086,
-      },
-      {
-        source: 'T1',
-        target: 'PASS',
-        weight: 4759,
-      },
-      {
-        source: 'T1',
-        target: 'T3',
-        weight: 883,
-      },
-      {
-        source: 'T1',
-        target: 'T4',
-        weight: 3254,
-      },
-      {
-        source: 'T1',
-        target: 'T5',
-        weight: 426,
-      },
-      {
-        source: 'T1',
-        target: 'T6',
-        weight: 286,
-      },
-      {
-        source: 'T1',
-        target: 'end',
-        weight: 1032,
-      },
-      {
-        source: 'T2',
-        target: 'T2',
-        weight: 1952,
-      },
-      {
-        source: 'T2',
-        target: 'T1',
-        weight: 1291,
-      },
-      {
-        source: 'T2',
-        target: 'T3',
-        weight: 208,
-      },
-      {
-        source: 'T2',
-        target: 'T4',
-        weight: 654,
-      },
-      {
-        source: 'T2',
-        target: 'PASS',
-        weight: 789,
-      },
-      {
-        source: 'T2',
-        target: 'end',
-        weight: 231,
-      },
-      {
-        source: 'T3',
-        target: 'T1',
-        weight: 142,
-      },
-      {
-        source: 'T3',
-        target: 'T3',
-        weight: 982,
-      },
-      {
-        source: 'T3',
-        target: 'T4',
-        weight: 766,
-      },
-      {
-        source: 'T3',
-        target: 'PASS',
-        weight: 1184,
-      },
-      {
-        source: 'T4',
-        target: 'T4',
-        weight: 9162,
-      },
-      {
-        source: 'T4',
-        target: 'T1',
-        weight: 1065,
-      },
-      {
-        source: 'T4',
-        target: 'T2',
-        weight: 56,
-      },
-      {
-        source: 'T4',
-        target: 'T5',
-        weight: 486,
-      },
-      {
-        source: 'T4',
-        target: 'T6',
-        weight: 522,
-      },
-      {
-        source: 'T4',
-        target: 'PASS',
-        weight: 7113,
-      },
-      {
-        source: 'T4',
-        target: 'end',
-        weight: 300,
-      },
-      {
-        source: 'T5',
-        target: 'T1',
-        weight: 202,
-      },
-      {
-        source: 'T5',
-        target: 'T4',
-        weight: 149,
-      },
-      {
-        source: 'T5',
-        target: 'T5',
-        weight: 576,
-      },
-      {
-        source: 'T5',
-        target: 'T6',
-        weight: 689,
-      },
-      {
-        source: 'T5',
-        target: 'T6',
-        weight: 983,
-      },
-      {
-        source: 'T6',
-        target: 'T1',
-        weight: 239,
-      },
-      {
-        source: 'T6',
-        target: 'T4',
-        weight: 151,
-      },
-      {
-        source: 'T6',
-        target: 'T5',
-        weight: 802,
-      },
-      {
-        source: 'T6',
-        target: 'T6',
-        weight: 191,
-      },
-      {
-        source: 'T6',
-        target: 'PASS',
-        weight: 383,
-      },
-      {
-        source: 'PASS',
-        target: 'end',
-        weight: 21785,
-      },
-    ],
-  });
-
-  renderProgressNetwork('network2', 1000, 550, network2.value);
-};
-
-onMounted(generateAndRender);
+const network2 = ref<ProgressNetwork>({
+  nodes: [
+    'start',
+    'T1',
+    'T2',
+    'T3',
+    'T4',
+    'T5',
+    'T6',
+    'T7',
+    'PASS',
+    'end',
+  ],
+  edges: [
+    {
+      source: 'start',
+      target: 'T1',
+      weight: 9627,
+    },
+    {
+      source: 'start',
+      target: 'T2',
+      weight: 944,
+    },
+    {
+      source: 'start',
+      target: 'T3',
+      weight: 1111,
+    },
+    {
+      source: 'start',
+      target: 'T4',
+      weight: 4681,
+    },
+    {
+      source: 'start',
+      target: 'T5',
+      weight: 381,
+    },
+    {
+      source: 'start',
+      target: 'PASS',
+      weight: 6574,
+    },
+    {
+      source: 'T1',
+      target: 'T1',
+      weight: 19228,
+    },
+    {
+      source: 'T1',
+      target: 'T2',
+      weight: 2086,
+    },
+    {
+      source: 'T1',
+      target: 'PASS',
+      weight: 4759,
+    },
+    {
+      source: 'T1',
+      target: 'T3',
+      weight: 883,
+    },
+    {
+      source: 'T1',
+      target: 'T4',
+      weight: 3254,
+    },
+    {
+      source: 'T1',
+      target: 'T5',
+      weight: 426,
+    },
+    {
+      source: 'T1',
+      target: 'T6',
+      weight: 286,
+    },
+    {
+      source: 'T1',
+      target: 'end',
+      weight: 1032,
+    },
+    {
+      source: 'T2',
+      target: 'T2',
+      weight: 1952,
+    },
+    {
+      source: 'T2',
+      target: 'T1',
+      weight: 1291,
+    },
+    {
+      source: 'T2',
+      target: 'T3',
+      weight: 208,
+    },
+    {
+      source: 'T2',
+      target: 'T4',
+      weight: 654,
+    },
+    {
+      source: 'T2',
+      target: 'PASS',
+      weight: 789,
+    },
+    {
+      source: 'T2',
+      target: 'end',
+      weight: 231,
+    },
+    {
+      source: 'T3',
+      target: 'T1',
+      weight: 142,
+    },
+    {
+      source: 'T3',
+      target: 'T3',
+      weight: 982,
+    },
+    {
+      source: 'T3',
+      target: 'T4',
+      weight: 766,
+    },
+    {
+      source: 'T3',
+      target: 'PASS',
+      weight: 1184,
+    },
+    {
+      source: 'T4',
+      target: 'T4',
+      weight: 9162,
+    },
+    {
+      source: 'T4',
+      target: 'T1',
+      weight: 1065,
+    },
+    {
+      source: 'T4',
+      target: 'T2',
+      weight: 56,
+    },
+    {
+      source: 'T4',
+      target: 'T5',
+      weight: 486,
+    },
+    {
+      source: 'T4',
+      target: 'T6',
+      weight: 522,
+    },
+    {
+      source: 'T4',
+      target: 'PASS',
+      weight: 7113,
+    },
+    {
+      source: 'T4',
+      target: 'end',
+      weight: 300,
+    },
+    {
+      source: 'T5',
+      target: 'T1',
+      weight: 202,
+    },
+    {
+      source: 'T5',
+      target: 'T4',
+      weight: 149,
+    },
+    {
+      source: 'T5',
+      target: 'T5',
+      weight: 576,
+    },
+    {
+      source: 'T5',
+      target: 'T6',
+      weight: 689,
+    },
+    {
+      source: 'T5',
+      target: 'T6',
+      weight: 983,
+    },
+    {
+      source: 'T6',
+      target: 'T1',
+      weight: 239,
+    },
+    {
+      source: 'T6',
+      target: 'T4',
+      weight: 151,
+    },
+    {
+      source: 'T6',
+      target: 'T5',
+      weight: 802,
+    },
+    {
+      source: 'T6',
+      target: 'T6',
+      weight: 191,
+    },
+    {
+      source: 'T6',
+      target: 'PASS',
+      weight: 383,
+    },
+    {
+      source: 'PASS',
+      target: 'end',
+      weight: 21785,
+    },
+  ],
+});
 </script>

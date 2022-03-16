@@ -13,20 +13,14 @@ const renderProgressNetwork = (
   // clear all children from element to allow rerendering
   d3
     .select(`#${id}`)
-    .selectAll('*')
+    .selectAll('.progress-network')
     .remove();
-
-  // define scale to dynamically place nodes based on given width
-  const xScale = d3
-    .scaleBand()
-    .domain(network.nodes)
-    .rangeRound([0, width])
-    .padding(0.5);
 
   // define svg
   const svg = d3
     .select(`#${id}`)
     .append('svg')
+    .attr('class', 'progress-network')
     .attr('width', width)
     .attr('height', height)
     .style('background-color', 'white')
@@ -42,13 +36,22 @@ const renderProgressNetwork = (
 
   /* draw nodes */
 
+  // define scale to dynamically place nodes based on given width
+  const xScale = d3
+    .scaleBand()
+    .domain(network.nodes)
+    .rangeRound([0, width])
+    .padding(0.5);
+
   // set node data and position
   const node = rootGrp
     .selectAll('node')
     .data(network.nodes)
     .enter()
     .append('g')
-    .attr('transform', (n) => `translate(${xScale(n) + xScale.bandwidth() / 2}, ${height / 2})`);
+    .attr('transform', (n) => (
+      `translate(${xScale(n) + xScale.bandwidth() / 2}, ${height / 2})`
+    ));
 
   // draw node circles
   node
@@ -157,12 +160,6 @@ const renderProgressNetwork = (
     (weight - lowestWeight) / (highestWeight - lowestWeight)
   );
 
-  const padCurve = (d: string) => {
-    console.log(d);
-
-    return d;
-  };
-
   const edgesSortedByWeight = network.edges.sort(
     (a, b) => a.weight - b.weight, // render heavier edges later
   );
@@ -176,7 +173,7 @@ const renderProgressNetwork = (
 
   edges
     .append('path')
-    .attr('d', (e) => padCurve(curve(getPoints(e))))
+    .attr('d', (e) => curve(getPoints(e)))
     .attr('marker-end', 'url(#arrow)')
     .attr('stroke', 'black')
     .attr('stroke-width', (e) => 1.5 + getWeightFactor(e.weight) * 2)
