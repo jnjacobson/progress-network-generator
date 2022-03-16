@@ -8,6 +8,8 @@ const renderProgressNetwork = (
   height: number,
   network: ProgressNetwork,
 ): void => {
+  /* setup svg and root grp */
+
   // clear all children from element to allow rerendering
   d3
     .select(`#${id}`)
@@ -38,18 +40,12 @@ const renderProgressNetwork = (
   // append root group to allow centering of network at the end
   const rootGrp = svg.append('g');
 
+  /* draw nodes */
+
   const edgesSortedByWeight = network.edges.sort(
     (a, b) => a.weight - b.weight, // render heavier edges later
   );
 
-  // create group for edges
-  const edges = rootGrp
-    .selectAll('edge')
-    .data(edgesSortedByWeight)
-    .enter()
-    .append('g');
-
-  /* draw nodes */
   // set node data and position
   const node = rootGrp
     .selectAll('node')
@@ -58,21 +54,14 @@ const renderProgressNetwork = (
     .append('g')
     .attr('transform', (n) => `translate(${xScale(n) + xScale.bandwidth() / 2}, ${height / 2})`);
 
-  const getNodeColor = (nodeName: string) => {
-    switch (nodeName) {
-      case 'start':
-      case 'end': return 'white';
-      case 'PASS': return '#D9F99D';
-      default: return '#BFDBFE';
-    }
-  };
-
   // draw node circles
   node
+    .filter((n) => !['start', 'end'].includes(n)) // start & end don't have circles
     .append('circle')
     .attr('r', 20)
-    .attr('fill', getNodeColor)
-    .attr('stroke', (n) => ['start', 'end'].includes(n) ? 'none' : 'black');
+    .attr('fill', (n) => n === 'PASS' ? '#D9F99D' : '#BFDBFE')
+    .attr('stroke', 'black');
+
   // draw node text
   node
     .append('text')
@@ -141,7 +130,9 @@ const renderProgressNetwork = (
       getPositionOfNode(e.target),
     ];
 
-    const copy: [number, number][] = JSON.parse(JSON.stringify(sourceAndTarget));
+    const copy: [number, number][] = JSON.parse(
+      JSON.stringify(sourceAndTarget),
+    );
 
     const isBackOrRepeatstep = sourceAndTarget[0][0] >= sourceAndTarget[1][0];
 
@@ -175,6 +166,13 @@ const renderProgressNetwork = (
 
     return d;
   };
+
+  // create group for edges
+  const edges = rootGrp
+    .selectAll('edge')
+    .data(edgesSortedByWeight)
+    .enter()
+    .append('g');
 
   edges
     .append('path')
