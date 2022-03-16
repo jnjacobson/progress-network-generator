@@ -3,7 +3,7 @@ import { ProgressNetwork } from './types';
 const calculateScore = (network: ProgressNetwork): number => (
   network.edges
 
-    // get all backsteps & repeat steps
+    // get all back & repeat step edges
     .filter((e) => (
       network.nodes.indexOf(e.target) <= network.nodes.indexOf(e.source)
     ))
