@@ -17,7 +17,7 @@
 
 <script setup lang="ts">
 import { v4 as uuidv4 } from 'uuid';
-import { computed, defineProps, onMounted } from 'vue';
+import { computed, defineProps, onMounted, watch } from 'vue';
 
 import { ProgressNetwork } from '../../src';
 import calculateScore from '../../src/calculcateScore';
@@ -33,7 +33,9 @@ const id = `network-${uuidv4()}`;
 
 const score = computed(() => calculateScore(props.network));
 
-onMounted(() => (
-  renderProgressNetwork(id, props.width, props.height, props.network)
+onMounted(() => watch(
+  props,
+  () => renderProgressNetwork(id, props.width, props.height, props.network),
+  { immediate: true },
 ));
 </script>
