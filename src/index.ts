@@ -1,3 +1,5 @@
-export * from './renderProgressNetwork';
-export * from './generateProgressNetwork';
 export * from './types';
+
+export * from './calculcateScore';
+export * from './generateProgressNetwork';
+export * from './renderProgressNetwork';
