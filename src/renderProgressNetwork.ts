@@ -42,10 +42,6 @@ const renderProgressNetwork = (
 
   /* draw nodes */
 
-  const edgesSortedByWeight = network.edges.sort(
-    (a, b) => a.weight - b.weight, // render heavier edges later
-  );
-
   // set node data and position
   const node = rootGrp
     .selectAll('node')
@@ -166,6 +162,10 @@ const renderProgressNetwork = (
 
     return d;
   };
+
+  const edgesSortedByWeight = network.edges.sort(
+    (a, b) => a.weight - b.weight, // render heavier edges later
+  );
 
   // create group for edges
   const edges = rootGrp
