@@ -1,5 +1,4 @@
-import * as d3 from 'd3';
-
+import * as d3 from './d3-bundle';
 import { Edge, ProgressNetwork } from './types';
 
 const renderProgressNetwork = (

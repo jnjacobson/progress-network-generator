@@ -1,6 +1,6 @@
 {
   "name": "@jnjacobson/progress-network-generator",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "description": "Generate progress networks from raw data.",
   "main": "dist/index.js",
   "types:": "dist/index.d.ts",
@@ -9,7 +9,7 @@
   ],
   "scripts": {
     "dev": "vite",
-    "build": "tsc",
+    "build": "rm -rf ./dist & tsc",
     "build:docs": "vue-tsc --noEmit && vite build",
     "preview": "vite preview",
     "vuetsc": "vue-tsc --noEmit",
@@ -24,7 +24,9 @@
   },
   "author": "Jan Jacobson",
   "dependencies": {
-    "d3": "^7.3.0"
+    "d3-scale": "^4.0.2",
+    "d3-selection": "^3.0.0",
+    "d3-shape": "^3.1.0"
   },
   "devDependencies": {
     "@types/d3": "^7.1.0",
