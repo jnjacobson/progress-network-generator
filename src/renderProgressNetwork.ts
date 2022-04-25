@@ -1,4 +1,4 @@
-import * as d3 from './d3-bundle';
+import * as d3 from './d3Bundle';
 import { Edge, ProgressNetwork } from './types';
 
 const renderProgressNetwork = (
@@ -243,4 +243,4 @@ const renderProgressNetwork = (
   rootGrp.attr('transform', () => `translate(0, ${yTrans})`);
 };
 
-export default renderProgressNetwork;
+export { renderProgressNetwork };
