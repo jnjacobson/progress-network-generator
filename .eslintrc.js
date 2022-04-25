@@ -3,6 +3,7 @@ module.exports = {
 
   env: {
     node: true,
+    'vue/setup-compiler-macros': true,
   },
 
   parser: 'vue-eslint-parser',
@@ -31,6 +32,7 @@ module.exports = {
   rules: {
     // TODO https://github.com/benmosher/eslint-plugin-import/issues/1479
     'import/no-duplicates': 'off',
+    'vue/multi-word-component-names': 'off',
 
     'import/order': ['error', {
       groups: [
