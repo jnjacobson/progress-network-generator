@@ -29,7 +29,7 @@
 import { ref } from 'vue';
 
 import type { ProgressNetwork, Trace } from '../../src';
-import generateProgressNetwork from '../../src/generateProgressNetwork';
+import { generateProgressNetwork } from '../../src';
 import Network from '../components/Network.vue';
 
 const TESTS = <string[]>[

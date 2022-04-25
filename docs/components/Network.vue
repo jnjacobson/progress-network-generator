@@ -17,11 +17,10 @@
 
 <script setup lang="ts">
 import { v4 as uuidv4 } from 'uuid';
-import { computed, defineProps, onMounted, watch } from 'vue';
+import { computed, onMounted, watch } from 'vue';
 
-import { ProgressNetwork } from '../../src';
-import calculateScore from '../../src/calculcateScore';
-import renderProgressNetwork from '../../src/renderProgressNetwork';
+import type { ProgressNetwork } from '../../src';
+import { calculateScore, renderProgressNetwork } from '../../src';
 
 const props = defineProps<{
   network: ProgressNetwork,

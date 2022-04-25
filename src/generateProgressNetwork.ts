@@ -81,4 +81,4 @@ const generateProgressNetwork = (
   return network;
 };
 
-export default generateProgressNetwork;
+export { generateProgressNetwork };
