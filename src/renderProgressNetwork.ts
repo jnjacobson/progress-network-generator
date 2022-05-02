@@ -48,7 +48,7 @@ const renderProgressNetwork = (
     .enter()
     .append('g')
     .attr('transform', (n) => (
-      `translate(${xScale(n) + xScale.bandwidth() / 2})`
+      `translate(${xScale(n) + xScale.bandwidth() / 2}, 0)`
     ));
 
   // draw node circles
@@ -232,12 +232,12 @@ const renderProgressNetwork = (
     .attr('height', (e, i) => bboxes[i].height * 0.9)
     .attr('width', (e, i) => bboxes[i].width + 6);
 
-  /* set height, viewbox & center network in svg */
+  /* set height, viewBox & center network in svg */
 
   const rootBbox = rootGrp.node().getBBox();
 
   svg.attr('height', rootBbox.height);
-  svg.attr('viewbox', `0 0 ${width} ${rootBbox.height}`);
+  svg.attr('viewBox', `0 0 ${width} ${rootBbox.height}`);
 
   // center draw group
   rootGrp.attr('transform', () => `translate(0, ${-rootBbox.y})`);
