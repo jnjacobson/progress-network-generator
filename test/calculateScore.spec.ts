@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import calculateScore from '../src/calculcateScore';
+import { calculateScore } from '../dist';
 
 describe('CalculateScore method', () => {
   it('calculates the score', () => {

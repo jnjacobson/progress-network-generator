@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
+import { generateProgressNetwork } from '../dist';
 import { Trace } from '../src';
-import generateProgressNetwork from '../src/generateProgressNetwork';
 
 describe('GenerateProgressNetwork method', () => {
   it('generates network', () => {
