@@ -4,7 +4,6 @@ import { Edge, ProgressNetwork } from './types';
 const renderProgressNetwork = (
   id: string,
   width: number,
-  height: number,
   network: ProgressNetwork,
   getNodeColor: (name: string) => string | undefined = () => undefined,
 ): void => {
@@ -22,7 +21,6 @@ const renderProgressNetwork = (
     .append('svg')
     .attr('class', 'progress-network')
     .attr('width', width)
-    .attr('height', height)
     .style('background-color', 'white')
     .style(
       'font-family',
@@ -50,7 +48,7 @@ const renderProgressNetwork = (
     .enter()
     .append('g')
     .attr('transform', (n) => (
-      `translate(${xScale(n) + xScale.bandwidth() / 2}, ${height / 2})`
+      `translate(${xScale(n) + xScale.bandwidth() / 2})`
     ));
 
   // draw node circles
@@ -234,14 +232,15 @@ const renderProgressNetwork = (
     .attr('height', (e, i) => bboxes[i].height * 0.9)
     .attr('width', (e, i) => bboxes[i].width + 6);
 
-  /* center network in svg */
+  /* set height, viewbox & center network in svg */
 
-  // get y transition distance
-  const rootGrpBbox = rootGrp.node().getBBox();
-  const yTrans = ((height - rootGrpBbox.height) / 2) - rootGrpBbox.y;
+  const rootBbox = rootGrp.node().getBBox();
+
+  svg.attr('height', rootBbox.height);
+  svg.attr('viewbox', `0 0 ${width} ${rootBbox.height}`);
 
   // center draw group
-  rootGrp.attr('transform', () => `translate(0, ${yTrans})`);
+  rootGrp.attr('transform', () => `translate(0, ${-rootBbox.y})`);
 };
 
 export { renderProgressNetwork };

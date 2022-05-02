@@ -1,10 +1,10 @@
 <template>
   <div
     :id="id"
-    class="border border-2 rounded"
+    class="border border-2 rounded p-3"
   >
     <div
-      class="absolute mx-3 my-2"
+      class="absolute"
     >
       Score:
       <span
@@ -25,7 +25,6 @@ import { calculateScore, renderProgressNetwork } from '../../src';
 const props = withDefaults(defineProps<{
   network: ProgressNetwork,
   width: number,
-  height: number,
   getNodeColor?: (name: string) => string,
 }>(), {
   getNodeColor: undefined,
@@ -40,7 +39,6 @@ onMounted(() => watch(
   () => renderProgressNetwork(
     id,
     props.width,
-    props.height,
     props.network,
     props.getNodeColor,
   ),

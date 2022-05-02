@@ -13,14 +13,12 @@
       <Network
         :network="network1"
         :width="600"
-        :height="250"
         :get-node-color="getNodeColor"
       />
 
       <Network
         :network="network2"
         :width="1000"
-        :height="550"
       />
     </div>
   </div>
