@@ -22,11 +22,14 @@ import { computed, onMounted, watch } from 'vue';
 import type { ProgressNetwork } from '../../src';
 import { calculateScore, renderProgressNetwork } from '../../src';
 
-const props = defineProps<{
+const props = withDefaults(defineProps<{
   network: ProgressNetwork,
   width: number,
   height: number,
-}>();
+  getNodeColor?: (name: string) => string,
+}>(), {
+  getNodeColor: undefined,
+});
 
 const id = `network-${uuidv4()}`;
 
@@ -34,7 +37,13 @@ const score = computed(() => calculateScore(props.network));
 
 onMounted(() => watch(
   props,
-  () => renderProgressNetwork(id, props.width, props.height, props.network),
+  () => renderProgressNetwork(
+    id,
+    props.width,
+    props.height,
+    props.network,
+    props.getNodeColor,
+  ),
   { immediate: true },
 ));
 </script>

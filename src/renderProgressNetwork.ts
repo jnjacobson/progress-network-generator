@@ -6,6 +6,7 @@ const renderProgressNetwork = (
   width: number,
   height: number,
   network: ProgressNetwork,
+  getNodeColor: (name: string) => string | undefined = () => undefined,
 ): void => {
   /* setup svg and root grp */
 
@@ -57,7 +58,7 @@ const renderProgressNetwork = (
     .filter((n) => !['start', 'end'].includes(n)) // start & end don't have circles
     .append('circle')
     .attr('r', 20)
-    .attr('fill', (n) => n === 'PASS' ? '#D9F99D' : '#BFDBFE')
+    .attr('fill', (n) => getNodeColor(n) ?? (n === 'PASS' ? '#D9F99D' : '#BFDBFE'))
     .attr('stroke', 'black');
 
   // draw node text

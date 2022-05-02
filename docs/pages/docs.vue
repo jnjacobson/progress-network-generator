@@ -14,6 +14,7 @@
         :network="network1"
         :width="600"
         :height="250"
+        :get-node-color="getNodeColor"
       />
 
       <Network
@@ -35,6 +36,7 @@ import Network from '../components/Network.vue';
 const TESTS = <string[]>[
   'T1',
   'T2',
+  'MSTR',
 ];
 const TRACES = <Trace[]>[
   // student 1
@@ -77,6 +79,10 @@ const TRACES = <Trace[]>[
 ];
 
 const network1 = ref<ProgressNetwork>(generateProgressNetwork(TESTS, TRACES));
+
+const getNodeColor = (name: string) => (
+  name === 'MSTR' ? '#FCA5A5' : undefined
+);
 
 const network2 = ref<ProgressNetwork>({
   nodes: [
